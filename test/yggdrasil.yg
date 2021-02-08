@@ -1,0 +1,118 @@
+grammar! ygg {"*.yg","*.ygg", "*.fragment", "*.grammar"}
+
+// Import the predefined types, 
+// Otherwise the String type of each language will be used directly to represent the atomic expression
+include! "rust_types.toml";
+
+// entry point
+program = _statements*
+
+// `#` will generate named bindings for languages that do not support union type, such as rust
+// Union type will be used directly in other languages that support union type, such as ts, scala
+// Note that compared to ANTLR, this is not mandatory.
+// If not specified, a name like `AuxVariant1` will be generated.
+_statements =
+    | grammar_statement   #Grammar
+    | fragment_statement  #Fragment
+    | include_statement   #Include
+    | ignore_statement    #Ignore
+
+
+//? 
+//* grammar tsg
+//* grammar tsg {"*.tsg", }
+grammar_statement = grammar ^id _grammar_exts? eos?
+_grammar_exts    _= "{" ~ @interleave(exts <- string, ",", trailing = true)? ~ "}"
+
+
+//? `fragment` means that this file cannot build as grammar, it can only be imported.
+//? `id` represents the default name when importing, which can be changed by `as`.
+//* fragment ascii
+fragment_statement = _fragment ^id eos?
+
+
+//?
+//*
+include_statement = 
+    | include (path <- string) (as ^id)? #FromPath
+    | include (path <- string) "{" @interleave(string, ",", trailing = true)? "}"
+include_pair      = 
+
+
+//?
+//* ignores /\/
+//* ignores [comment, comment_inline]
+ignores_statement = 
+    | _ignores any 
+    | _ignores "[" @interleave(string, ",")? "]"
+
+
+
+
+value _= String | Regex |
+
+
+
+Expression
+
+
+// `f(a, b)`  vs `f ~ (a | b) `
+// `f!(a, b)` vs `f ~ !(a | b)`
+FuncionCall = name <- token("@", Id) "(" @interleave(Expression, ",") ")"
+
+
+
+
+// Identifier
+@syntax_type(identifier)
+Id: String = @token(("_" | XID_START) XID_CONTINUE)
+
+
+
+Integer = _sign? Unsigned
+// The bare 0 will be considered as the string "0"
+Unsigned = 0 | [1-9] [0-9]*
+_sign = [+-]
+
+
+Regex = "/" 
+
+RegexRange = "["  "]"
+
+
+
+
+InlineAssignment =  
+
+KeywordAssignment = Id
+
+eos: bool = ";"
+
+
+
+fn! interleave(rule: rule, sep, trailing = false) {
+    seq(rule, repeat(seq(",", rule)))
+}
+
+Boolean = "true" | "false"
+
+@syntax_type_hook(keyword)
+
+@define_hook(token)
+fragment = "fragment!"
+grammar  = "grammar!"
+ignore   = "ignore!"
+include   = "include!"
+function = "fn!"
+as = "as"
+@define_hook()
+
+@syntax_type_default(constant)
+True  = "true"
+False = "false"
+
+// clean syntax type broadcast
+@syntax_type_default!()
+
+
+

@@ -1,0 +1,103 @@
+{
+    "private": true,
+    "name": "vscode-ygg",
+    "displayName": "Yggdrasil Language Support",
+    "description": "Highlight and formatter for ygg Readable Configiration",
+    "publisher": "aster",
+    "version": "0.1.0",
+    "icon": "logo.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/GalAster/vscode-ygg.git"
+    },
+    "categories": [
+        "Programming Languages",
+        "Formatters"
+    ],
+    "main": "./dist/extension.js",
+    "engines": {
+        "vscode": "^1.39.0"
+    },
+    "activationEvents": [
+        "onLanguage:ygg"
+    ],
+    "scripts": {
+        "build": "wee lint && ts-node syntax/build.ts && tsc",
+        "pack": "wee build && vsce package",
+        "lint": "tslint **/*.ts --fix",
+        "reset": "git reset Head~ --soft"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "id": "ygg",
+                "aliases": [
+                    "Yggdrasil"
+                ],
+                "extensions": [
+                    ".ygg",
+                    ".ark",
+                    ".rc"
+                ],
+                "filenames": [],
+                "filenamePatterns": [],
+                "mimetypes": [
+                    "text/x-ygg"
+                ],
+                "configuration": "./syntax/ygg.configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "ygg",
+                "scopeName": "source.ygg",
+                "path": "./syntax/ygg.tmLanguage.json"
+            },
+            {
+                "scopeName": "markdown.ygg.codeblock",
+                "path": "./syntax/ygg.markdown.json",
+                "injectTo": [
+                    "text.html.markdown"
+                ],
+                "embeddedLanguages": {
+                    "meta.embedded.block.ygg": "ygg"
+                }
+            }
+        ],
+        "configuration": {
+            "title": "ygg Config",
+            "properties": {
+                "ygg.useLanguageServer": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use Yggdrasil Language Server"
+                },
+                "ygg.useDevelopingLanguageServer": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When this option is enabled, the binary built in the cargo directory will be forced to use."
+                },
+                "ygg.trace.server": {
+                    "type": "string",
+                    "default": "off",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "description": "Traces the communication between VS Code and the language server.",
+                    "scope": "window"
+                }
+            }
+        }
+    },
+    "dependencies": {
+        "vscode-languageclient": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^11.15.44",
+        "@types/vscode": "^1.52.0",
+        "tslint": "^6.1.3",
+        "typescript": "^3.9.7"
+    }
+}
