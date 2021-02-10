@@ -6,9 +6,9 @@ tab_width = 4
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.{arc,json}]
+[*.{json}]
 indent_style = space
-indent_size = 2
+indent_size = 4
 
 [*.toml]
 indent_style = space
