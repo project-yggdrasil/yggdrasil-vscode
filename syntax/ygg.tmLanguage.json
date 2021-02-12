@@ -64,10 +64,10 @@
                     "begin": "(?<!\\w)(grammar!)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(\\{)\\s*",
                     "beginCaptures": {
                         "1": {
-                            "name": "keyword.control.import.ygg"
+                            "name": "keyword.control.grammar.ygg"
                         },
                         "2": {
-                            "name": "entity.name.type.class.ygg"
+                            "name": "variable.other.readwrite.ygg"
                         },
                         "3": {
                             "name": "punctuation.definition.dict.inline.ygg"
@@ -90,7 +90,7 @@
                     "match": "(grammar!)\\s+([A-Za-z_][A-Za-z0-9_]*)(?=\\s*$)",
                     "captures": {
                         "1": {
-                            "name": "keyword.control.import.ygg"
+                            "name": "keyword.control.grammar.ygg"
                         },
                         "2": {
                             "name": "entity.name.type.class.ygg"
@@ -99,31 +99,51 @@
                 }
             ]
         },
-        "import": {
-            "comment": null,
-            "begin": "(#import)",
-            "captures": {
-                "1": {
-                    "name": "keyword.control.import.ygg"
-                }
-            },
-            "end": "\\b(as)\\b\\s+([A-Za-z_][A-Za-z0-9_]*)",
-            "endCaptures": {
-                "1": {
-                    "name": "keyword.control.as.ygg"
-                },
-                "2": {
-                    "name": "entity.name.tag.ygg"
-                }
-            },
+        "include": {
             "patterns": [
                 {
-                    "name": "string.path.ygg",
-                    "match": "(\".*\"|'.*')"
+                    "comment": "grammar! name {\"*.ext\", }",
+                    "begin": "(?<!\\w)(include!)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(\\{)\\s*",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "keyword.control.include.ygg"
+                        },
+                        "2": {
+                            "name": "entity.name.type.class.ygg"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.dict.inline.ygg"
+                        }
+                    },
+                    "end": "\\s*(\\})(?!\\w)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.dict.inline.ygg"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#data"
+                        }
+                    ]
                 },
                 {
-                    "name": "keyword.control.file.ygg",
-                    "match": "([A-Za-z_][A-Za-z0-9_]*)"
+                    "comment": "grammar! name as alias",
+                    "match": "(include!)\\s+([.]+)\\s+((as)([A-Za-z_][A-Za-z0-9_]*))?(?=\\s*$)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.include.ygg"
+                        },
+                        "2": {
+                            "name": "entity.name.type.class.ygg"
+                        },
+                        "3": {
+                            "name": "keyword.control.include.ygg"
+                        },
+                        "4": {
+                            "name": "entity.name.type.class.ygg"
+                        }
+                    }
                 }
             ]
         },
