@@ -6,6 +6,7 @@ information_for_contributors:
 patterns:
   - include: '#comment'
   - include: '#grammar'
+  - include: '#fragment'
   - include: '#import'
   - include: '#table'
   - include: '#record'
@@ -45,10 +46,16 @@ repository:
         captures:
           '1': {name: keyword.control.grammar.ygg}
           '2': {name: entity.name.type.class.ygg}
-  include:
+  fragment:
+    - comment: fragment! name
+      match: (fragment!)\s+([A-Za-z_][A-Za-z0-9_]*)(?=\s*$)
+      captures:
+        '1': {name: keyword.control.fragment.ygg}
+        '2': {name: entity.name.type.class.ygg}
+  import:
     patterns:
       - comment: grammar! name {"*.ext", }
-        begin: (?<!\w)(include!)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(\{)\s*
+        begin: (?<!\w)(import!)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(\{)\s*
         beginCaptures:
           '1': {name: keyword.control.include.ygg}
           '2': {name: entity.name.type.class.ygg}
@@ -58,13 +65,16 @@ repository:
           '1': {name: punctuation.definition.dict.inline.ygg}
         patterns:
           - include: '#data'
-      - comment: grammar! name as alias
-        match: (include!)\s+([.]+)\s+((as)([A-Za-z_][A-Za-z0-9_]*))?(?=\s*$)
-        captures:
+      - comment: import! name as alias
+        begin: (?<!\w)(import!)\s+
+        beginCaptures:
+          '1': {name: keyword.control.import.ygg}
+        end: (as|as!)\s+([A-Za-z_][A-Za-z0-9_]*)
+        endCaptures:
           '1': {name: keyword.control.include.ygg}
           '2': {name: entity.name.type.class.ygg}
-          '3': {name: keyword.control.include.ygg}
-          '4': {name: entity.name.type.class.ygg}
+        patterns:
+          - include: '#data'
   table:
     patterns:
       - comment: '{dict.scope}'

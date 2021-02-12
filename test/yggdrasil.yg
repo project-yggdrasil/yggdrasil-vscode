@@ -1,8 +1,8 @@
-grammar! ygg {"*.yg","*.ygg", "*.fragment", "*.grammar"}
+grammar! ygg {"*.yg","*.ygg", "*.grammar"}
 
-// Import the predefined types, 
+// Import the predefined types,
 // Otherwise the String type of each language will be used directly to represent the atomic expression
-include! "rust_types.toml";
+import! "typedefs/rust_types.ygg";
 
 // entry point
 program = _statements*
@@ -18,7 +18,7 @@ _statements =
     | ignore_statement    #Ignore
 
 
-//? 
+//?
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
 grammar_statement = grammar ^id _grammar_exts? eos?
@@ -33,17 +33,17 @@ fragment_statement = _fragment ^id eos?
 
 //?
 //*
-include_statement = 
+include_statement =
     | include (path <- string) (as ^id)? #FromPath
     | include (path <- string) "{" @interleave(string, ",", trailing = true)? "}"
-include_pair      = 
+include_pair      =
 
 
 //?
 //* ignores /\/
 //* ignores [comment, comment_inline]
-ignores_statement = 
-    | _ignores any 
+ignores_statement =
+    | _ignores any
     | _ignores "[" @interleave(string, ",")? "]"
 
 
@@ -75,14 +75,14 @@ Unsigned = 0 | [1-9] [0-9]*
 _sign = [+-]
 
 
-Regex = "/" 
+Regex = "/"
 
 RegexRange = "["  "]"
 
 
 
 
-InlineAssignment =  
+InlineAssignment =
 
 KeywordAssignment = Id
 
