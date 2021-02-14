@@ -8,7 +8,7 @@ patterns:
   - include: '#grammar'
   - include: '#fragment'
   - include: '#import'
-  - include: '#table'
+  - include: '#macro'
   - include: '#record'
 #   - include: '#illegal'
 repository:
@@ -69,12 +69,31 @@ repository:
         begin: (?<!\w)(import!)\s+
         beginCaptures:
           '1': {name: keyword.control.import.ygg}
-        end: (as|as!)\s+([A-Za-z_][A-Za-z0-9_]*)
+        end: (as|as!)\s+([A-Za-z_][A-Za-z0-9_]*)(?=\s*$)
         endCaptures:
           '1': {name: keyword.control.include.ygg}
           '2': {name: entity.name.type.class.ygg}
         patterns:
           - include: '#data'
+  macro:
+    patterns:
+      - comment: @fn_name.sub()
+        begin: ([@][A-Za-z_][A-Za-z0-9_]*)([.][A-Za-z_][A-Za-z0-9_]*)?\s*(\()
+        beginCaptures:
+            '1': {name: string.regexp.set}
+            '2': {name: string.regexp.set}
+            '3': {name: punctuation.definition.macro.ygg}
+        end: (\))
+        endCaptures:
+            '1': {name: punctuation.definition.macro.ygg}
+        patterns:
+            - include: '#data'
+      - comment: @fn_name.sub
+        match: ([@][A-Za-z_][A-Za-z0-9_]*)([.][A-Za-z_][A-Za-z0-9_]*)?
+        captures:
+            '1': {name: string.regexp.set}
+            '2': {name: string.regexp.set}
+            '3': {name: punctuation.definition.macro.ygg}
   table:
     patterns:
       - comment: '{dict.scope}'

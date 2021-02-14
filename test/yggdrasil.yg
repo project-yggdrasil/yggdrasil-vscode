@@ -58,14 +58,14 @@ Expression
 
 // `f(a, b)`  vs `f ~ (a | b) `
 // `f!(a, b)` vs `f ~ !(a | b)`
-FuncionCall = name <- token("@", Id) "(" @interleave(Expression, ",") ")"
+funcion_call = name <- token("@", Id) "(" @interleave(Expression, ",") ")"
 
 
 
 
 // Identifier
 @syntax_type(identifier)
-Id: String = @token(("_" | XID_START) XID_CONTINUE)
+id: String = @token(("_" | XID_START) XID_CONTINUE)
 
 
 
