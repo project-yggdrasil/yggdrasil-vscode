@@ -22,7 +22,7 @@
             "include": "#macro"
         },
         {
-            "include": "#record"
+            "include": "#tag"
         }
     ],
     "repository": {
@@ -102,20 +102,17 @@
                 }
             ]
         },
-        "fragment": [
-            {
-                "comment": "fragment! name",
-                "match": "(fragment!)\\s+([A-Za-z_][A-Za-z0-9_]*)(?=\\s*$)",
-                "captures": {
-                    "1": {
-                        "name": "keyword.control.fragment.ygg"
-                    },
-                    "2": {
-                        "name": "entity.name.type.class.ygg"
-                    }
-                }
-            }
-        ],
+        "fragment": {
+            "1": {
+                "name": "keyword.control.fragment.ygg"
+            },
+            "2": {
+                "name": "entity.name.type.class.ygg"
+            },
+            "comment": "fragment! name",
+            "match": "(?<!\\w)(fragment!)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+            "captures": null
+        },
         "import": {
             "patterns": [
                 {
@@ -214,51 +211,17 @@
                 }
             ]
         },
-        "table": {
-            "patterns": [
-                {
-                    "comment": "{dict.scope}",
-                    "name": "meta.tag.dict.ygg",
-                    "match": "^\\s*(\\{)([^\\{\\}]*)(\\})",
-                    "captures": {
-                        "1": {
-                            "name": "punctuation.definition.dict.ygg"
-                        },
-                        "2": {
-                            "patterns": [
-                                {
-                                    "match": "[^\\s.]+",
-                                    "name": "entity.other.attribute-name.dict.ygg"
-                                }
-                            ]
-                        },
-                        "3": {
-                            "name": "punctuation.definition.dict.ygg"
-                        }
-                    }
+        "tag": {
+            "comment": null,
+            "match": "([#])([A-Za-z_][A-Za-z0-9_]*)",
+            "captures": {
+                "1": {
+                    "name": "entity.name.tag.ygg"
                 },
-                {
-                    "comment": "[list.scope]",
-                    "name": "meta.tag.list.ygg",
-                    "match": "^\\s*(\\[)([^\\[\\]]*)(\\])",
-                    "captures": {
-                        "1": {
-                            "name": "punctuation.definition.list.ygg"
-                        },
-                        "2": {
-                            "patterns": [
-                                {
-                                    "match": "[^\\s.]+",
-                                    "name": "entity.other.attribute-name.list.ygg"
-                                }
-                            ]
-                        },
-                        "3": {
-                            "name": "punctuation.definition.list.ygg"
-                        }
-                    }
+                "2": {
+                    "name": "entity.name.tag.ygg"
                 }
-            ]
+            }
         },
         "record": {
             "patterns": [

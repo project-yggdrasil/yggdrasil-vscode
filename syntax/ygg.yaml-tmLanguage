@@ -9,7 +9,7 @@ patterns:
   - include: '#fragment'
   - include: '#import'
   - include: '#macro'
-  - include: '#record'
+  - include: '#tag'
 #   - include: '#illegal'
 repository:
   comment:
@@ -47,11 +47,11 @@ repository:
           '1': {name: keyword.control.grammar.ygg}
           '2': {name: entity.name.type.class.ygg}
   fragment:
-    - comment: fragment! name
-      match: (fragment!)\s+([A-Za-z_][A-Za-z0-9_]*)(?=\s*$)
-      captures:
-        '1': {name: keyword.control.fragment.ygg}
-        '2': {name: entity.name.type.class.ygg}
+    comment: fragment! name
+    match: (?<!\w)(fragment!)\s+([A-Za-z_][A-Za-z0-9_]*)
+    captures:
+    '1': {name: keyword.control.fragment.ygg}
+    '2': {name: entity.name.type.class.ygg}
   import:
     patterns:
       - comment: grammar! name {"*.ext", }
@@ -94,22 +94,12 @@ repository:
             '1': {name: string.regexp.set}
             '2': {name: string.regexp.set}
             '3': {name: punctuation.definition.macro.ygg}
-  table:
-    patterns:
-      - comment: '{dict.scope}'
-        name: meta.tag.dict.ygg
-        match: ^\s*(\{)([^\{\}]*)(\})
-        captures:
-          '1': {name: punctuation.definition.dict.ygg}
-          '2': {patterns: [{match: '[^\s.]+', name: entity.other.attribute-name.dict.ygg}]}
-          '3': {name: punctuation.definition.dict.ygg}
-      - comment: '[list.scope]'
-        name: meta.tag.list.ygg
-        match: ^\s*(\[)([^\[\]]*)(\])
-        captures:
-          '1': {name: punctuation.definition.list.ygg}
-          '2': {patterns: [{match: '[^\s.]+', name: entity.other.attribute-name.list.ygg}]}
-          '3': {name: punctuation.definition.list.ygg}
+  tag:
+    comment: #TagName
+    match: ([#])([A-Za-z_][A-Za-z0-9_]*)
+    captures:
+        '1': {name: entity.name.tag.ygg}
+        '2': {name: entity.name.tag.ygg}
   record:
     patterns:
       - name: invalid.no-key.ygg
@@ -253,14 +243,6 @@ repository:
             name: constant.character.escape.ygg
           - match: \\[^btnfr/"\\\n]
             name: invalid.illegal.escape.ygg
-      - match: ([A-Za-z_][A-Za-z0-9_]*)?\s*((\|).*)$
-        captures:
-          '1': {name: keyword.control.handler.string.ygg}
-          '2': {name: string.raw.ygg}
-          '3': {name: keyword.control.handler.string.ygg}
-    #   - match: ([^,\]\}]+)
-    #     captures:
-    #       '1': {name: string.bare.ygg}
   illegal:
     comment: string.illegal.cover.ygg
     name: invalid.illegal

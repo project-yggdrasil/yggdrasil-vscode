@@ -90,7 +90,7 @@ eos: bool = ";"
 
 
 
-fn! interleave(rule: rule, sep, trailing = false) {
+fn! interleave(rule: Rule, sep: Rule, trailing: bool = false) {
     seq(rule, repeat(seq(",", rule)))
 }
 
