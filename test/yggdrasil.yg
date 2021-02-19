@@ -9,7 +9,7 @@ program = _statements*
 
 // `#` will generate named bindings for languages that do not support union type, such as rust
 // Union type will be used directly in other languages that support union type, such as ts, scala
-// Note that compared to ANTLR, this is not mandatory.
+// Note that compared to ANTLR, this is not mandatory, but the same name is also forbidden.
 // If not specified, a name like `AuxVariant1` will be generated.
 _statements =
     | grammar_statement   #Grammar
@@ -34,8 +34,9 @@ fragment_statement = _fragment ^id eos?
 //?
 //*
 include_statement =
-    | include (path <- string) (as ^id)? #FromPath
-    | include (path <- string) "{" @interleave(string, ",", trailing = true)? "}"
+    | include (path <- string) (as ^id)?         #FromPath
+    | include (path <- string) _include_selected #FromPath
+_include_selected = "{" @interleave(pair <- include_pair, ",", trailing = true)? "}"
 include_pair      =
 
 
@@ -43,8 +44,8 @@ include_pair      =
 //* ignores /\/
 //* ignores [comment, comment_inline]
 ignores_statement =
-    | _ignores any
-    | _ignores "[" @interleave(string, ",")? "]"
+    | ignores any
+    | ignores "[" @interleave(string, ",")? "]"
 
 
 
@@ -58,7 +59,7 @@ Expression
 
 // `f(a, b)`  vs `f ~ (a | b) `
 // `f!(a, b)` vs `f ~ !(a | b)`
-funcion_call = name <- token("@", Id) "(" @interleave(Expression, ",") ")"
+funcion_call = name <- @token("@", Id) "(" @interleave(Expression, ",") ")"
 
 
 
@@ -75,44 +76,45 @@ Unsigned = 0 | [1-9] [0-9]*
 _sign = [+-]
 
 
-Regex = "/"
+regex = "/"
 
-RegexRange = "["  "]"
-
-
+regex_range = "["  "]"
 
 
-InlineAssignment =
 
-KeywordAssignment = Id
+
+inline_assignment =
+
+keyword_assignment = Id
 
 eos: bool = ";"
 
 
 
-fn! interleave(rule: Rule, sep: Rule, trailing: bool = false) {
-    seq(rule, repeat(seq(",", rule)))
+macro! interleave(rule: Rule, sep: Rule, trailing: bool = false) {
+    rule ~ (",", rule)*
 }
 
-Boolean = "true" | "false"
+boolean = "true" | "false"
 
+// All elements defined next will be marked as `keyword`
 @syntax_type_hook(keyword)
 
 @define_hook(token)
 fragment = "fragment!"
 grammar  = "grammar!"
 ignore   = "ignore!"
-include   = "include!"
+include  = "include!"
 function = "fn!"
-as = "as"
+as       = "as"
 @define_hook()
 
-@syntax_type_default(constant)
-True  = "true"
-False = "false"
+@syntax_type_hook(constant)
+true  = "true"
+false = "false"
 
 // clean syntax type broadcast
-@syntax_type_default!()
+@syntax_type_hook()
 
 
 

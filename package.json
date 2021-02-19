@@ -65,7 +65,7 @@
             }
         ],
         "configuration": {
-            "title": "ygg Config",
+            "title": "Yggdrasil Config",
             "properties": {
                 "ygg.useLanguageServer": {
                     "type": "boolean",
