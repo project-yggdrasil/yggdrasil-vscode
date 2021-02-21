@@ -40,7 +40,7 @@ repository:
         endCaptures:
           '1': {name: punctuation.definition.dict.inline.ygg}
         patterns:
-          - include: '#data'
+          - include: '#string'
       - comment: grammar! name
         match: (grammar!)\s+([A-Za-z_][A-Za-z0-9_]*)(?=\s*$)
         captures:
@@ -65,16 +65,15 @@ repository:
           '1': {name: punctuation.definition.dict.inline.ygg}
         patterns:
           - include: '#data'
-      - comment: import! name as alias
-        begin: (?<!\w)(import!)\s+
-        beginCaptures:
-          '1': {name: keyword.control.import.ygg}
-        end: (as|as!)\s+([A-Za-z_][A-Za-z0-9_]*)(?=\s*$)
-        endCaptures:
-          '1': {name: keyword.control.include.ygg}
-          '2': {name: entity.name.type.class.ygg}
-        patterns:
-          - include: '#data'
+      - match: (?<!\w)(import!)
+        name: keyword.control.import.ygg
+    #   - comment: import! name as alias
+    #     begin: (?<!\w)(import!)\s*('[^']*'|"[^"]*")\s*(?:(as|as!)\s*([A-Za-z_][A-Za-z0-9_]*))?
+    #     captures:
+    #       '1': {name: keyword.control.import.ygg}
+    #       '3': {name: string.quoted.single.ygg}
+    #       '3': {name: keyword.control.as.ygg}
+    #       '4': {name: entity.name.type.class.ygg}
   macro:
     patterns:
       - comment: @fn_name.sub()
@@ -103,7 +102,7 @@ repository:
           '1': {name: entity.name.tag.ygg}
           '2': {name: keyword.operator.assignment.ygg}
           '3': {name: constant.other.boolean.ygg}
-      - comment: trailing = true
+      - comment: trailing = 1
         match: ([A-Za-z_][A-Za-z0-9_]*)\s*(=)
         captures:
           '1': {name: keyword.operator.assignment.ygg}
@@ -111,19 +110,25 @@ repository:
   tag:
     patterns:
       - comment: #TagName
-        match: ([#])([A-Za-z_][A-Za-z0-9_]*)
+        match: ([#])([A-Za-z_][A-Za-z0-9_]*)(!)?
         captures:
             '1': {name: entity.name.tag.ygg}
             '2': {name: entity.name.tag.ygg}
+            '3': {name: entity.name.tag.ygg}
       - comment: #TagName
-        match: ([A-Za-z_][A-Za-z0-9_]*)\s*(<-)
+        match: ([A-Za-z0-9_]*)\s*(<-)
         captures:
             '1': {name: entity.name.tag.ygg}
             '2': {name: keyword.operator.assignment.ygg}
       - comment: ^id
-        match: (\&)\s*([A-Za-z_][A-Za-z0-9_]*)
+        match: (\^)\s*([A-Za-z_][A-Za-z0-9_]*)
         captures:
             '1': {name: keyword.operator.assignment.ygg}
+            '2': {name: entity.name.tag.ygg}
+      - comment: &id
+        match: (\&)\s*([A-Za-z_][A-Za-z0-9_]*)
+        captures:
+            '1': {name: storage.type.ygg}
             '2': {name: entity.name.tag.ygg}
       - comment: : id
         match: (\:)\s*([A-Za-z_][A-Za-z0-9_]*)
@@ -136,13 +141,13 @@ repository:
         name: storage.type.ygg
       - match: (\^)
         name: keyword.operator.bind.ygg
-      - match: (\|)
-        name: keyword.operator.or.ygg
       - match: (\~)
         name: storage.type.ygg
       - match: (\+)
         name: storage.type.ygg
       - match: (\*)
+        name: storage.type.ygg
+      - match: (\|)
         name: keyword.operator.or.ygg
       - match: (=|@=|_=)
         name: keyword.operator.or.ygg
@@ -226,7 +231,7 @@ repository:
           - include: 'source.regexp'
   string:
     patterns:
-      - match: ('[^'\\]*(?:\\.[^'\\]*)*")
+      - match: ('[^'\\]*(?:\\.[^'\\]*)*')
         captures:
           '1': {name: string.quoted.single.ygg}
         patterns:

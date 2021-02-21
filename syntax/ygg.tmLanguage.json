@@ -84,7 +84,7 @@
                     },
                     "patterns": [
                         {
-                            "include": "#data"
+                            "include": "#string"
                         }
                     ]
                 },
@@ -142,27 +142,8 @@
                     ]
                 },
                 {
-                    "comment": "import! name as alias",
-                    "begin": "(?<!\\w)(import!)\\s+",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "keyword.control.import.ygg"
-                        }
-                    },
-                    "end": "(as|as!)\\s+([A-Za-z_][A-Za-z0-9_]*)(?=\\s*$)",
-                    "endCaptures": {
-                        "1": {
-                            "name": "keyword.control.include.ygg"
-                        },
-                        "2": {
-                            "name": "entity.name.type.class.ygg"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#data"
-                        }
-                    ]
+                    "match": "(?<!\\w)(import!)",
+                    "name": "keyword.control.import.ygg"
                 }
             ]
         },
@@ -232,7 +213,7 @@
                     }
                 },
                 {
-                    "comment": "trailing = true",
+                    "comment": "trailing = 1",
                     "match": "([A-Za-z_][A-Za-z0-9_]*)\\s*(=)",
                     "captures": {
                         "1": {
@@ -249,19 +230,22 @@
             "patterns": [
                 {
                     "comment": null,
-                    "match": "([#])([A-Za-z_][A-Za-z0-9_]*)",
+                    "match": "([#])([A-Za-z_][A-Za-z0-9_]*)(!)?",
                     "captures": {
                         "1": {
                             "name": "entity.name.tag.ygg"
                         },
                         "2": {
                             "name": "entity.name.tag.ygg"
+                        },
+                        "3": {
+                            "name": "entity.name.tag.ygg"
                         }
                     }
                 },
                 {
                     "comment": null,
-                    "match": "([A-Za-z_][A-Za-z0-9_]*)\\s*(<-)",
+                    "match": "([A-Za-z0-9_]*)\\s*(<-)",
                     "captures": {
                         "1": {
                             "name": "entity.name.tag.ygg"
@@ -277,6 +261,18 @@
                     "captures": {
                         "1": {
                             "name": "keyword.operator.assignment.ygg"
+                        },
+                        "2": {
+                            "name": "entity.name.tag.ygg"
+                        }
+                    }
+                },
+                {
+                    "comment": null,
+                    "match": "(\\&)\\s*([A-Za-z_][A-Za-z0-9_]*)",
+                    "captures": {
+                        "1": {
+                            "name": "storage.type.ygg"
                         },
                         "2": {
                             "name": "entity.name.tag.ygg"
@@ -308,10 +304,6 @@
                     "name": "keyword.operator.bind.ygg"
                 },
                 {
-                    "match": "(\\|)",
-                    "name": "keyword.operator.or.ygg"
-                },
-                {
                     "match": "(\\~)",
                     "name": "storage.type.ygg"
                 },
@@ -321,6 +313,10 @@
                 },
                 {
                     "match": "(\\*)",
+                    "name": "storage.type.ygg"
+                },
+                {
+                    "match": "(\\|)",
                     "name": "keyword.operator.or.ygg"
                 },
                 {
@@ -516,7 +512,7 @@
         "string": {
             "patterns": [
                 {
-                    "match": "('[^'\\\\]*(?:\\\\.[^'\\\\]*)*\")",
+                    "match": "('[^'\\\\]*(?:\\\\.[^'\\\\]*)*')",
                     "captures": {
                         "1": {
                             "name": "string.quoted.single.ygg"

@@ -2,26 +2,26 @@ grammar! ygg {"*.yg","*.ygg", "*.grammar"}
 
 // Import the predefined types,
 // Otherwise the String type of each language will be used directly to represent the atomic expression
-import! "@typedefs/rust_types.toml";
+import! "@typedefs/rust_types.toml"
 
 // entry point
-program = _statements*
+program = statement*
 
 // `#` will generate named bindings for languages that do not support union type, such as rust
 // Union type will be used directly in other languages that support union type, such as ts, scala
 // Note that compared to ANTLR, this is not mandatory, but the same name is also forbidden.
 // If not specified, a name like `AuxVariant1` will be generated.
-_statements =
-    | grammar_statement   #Grammar
-    | fragment_statement  #Fragment
-    | include_statement   #Include
-    | ignore_statement    #Ignore
-
+statement =
+    | grammar_statement   #GrammarStatement
+    | fragment_statement  #FragmentStatement
+    | include_statement   #IncludeStatement
+    | ignore_statement    #IgnoreStatement
+    | eos                 #EmptyStatement!
 
 //?
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
-grammar_statement = grammar &id _grammar_exts? eos?
+grammar_statement = grammar ^id _grammar_exts? eos?
 _grammar_exts    _= "{" ~ @interleave(exts <- string, ",", trailing = true)? ~ "}"
 
 
@@ -36,21 +36,23 @@ fragment_statement = _fragment ^id eos?
 include_statement =
     | include (path <- string) (as ^id)?         #FromPath
     | include (path <- string) _include_selected #FromPath
-_include_selected = "{" @interleave(pair <- include_pair, ",", trailing = true)? "}"
-include_pair      =
+_include_selected = "{" @interleave(item <- include_item, ",", trailing = 1)? "}"
+include_item      = (id <- id) as (alias <- id)
 
 
 //?
 //* ignores /\/
 //* ignores [comment, comment_inline]
 ignores_statement =
-    | ignores any
-    | ignores "[" @interleave(string, ",")? "]"
+    | ignores atom
+    | ignores "{" @interleave(string, ",", trailing = 1)? "}"
 
 
+// `_` inline a item even if it not mark as automatic inline
+data = _atom
 
 
-value _= string | regex |
+atom = string | regex |
 
 
 
@@ -59,7 +61,7 @@ expression
 
 // `f(a, b)`  vs `f ~ (a | b) `
 // `f!(a, b)` vs `f ~ !(a | b)`
-funcion_call = name <- @token("@", id) "(" @interleave(Expression, ",") ")"
+funcion_call = (name <- @token("@", id)) "(" @interleave(Expression, ",") ")"
 
 
 
@@ -70,17 +72,20 @@ id: String @= ("_" | XID_START) ~ XID_CONTINUE
 
 
 // The bare 0 will be considered as the string "0"
-integer  @= _sign? _unsigned
-_unsigned = 0 | [1-9] [0-9]*
-_sign     = [+-]
+integer: Integer @= _sign? _unsigned
+_unsigned         = 0 | [1-9] [0-9]*
+_sign             = [+-]
 
 
 regex = "/"
 
 regex_range = "["  "]"
 
+regex_p = "\\p"
 
-
+regex_p _=
+    | "{" repeats <- integer "}"
+    | "{" (least <- integer?) "," (most <- integer?)  "}"
 
 inline_assignment =
 
@@ -99,13 +104,16 @@ comment_block = "//"
 
 @syntax_type(identifier)
 
-boolean: bool @= true | false
+@syntax_type(constant)
+bool: bool @= "true" | "false"
 
+
+
+//! ===================== HOOK AREA ============================
+
+// All elements defined next will warp with `@token`
+@define_hook(@token)
 // All elements defined next will be marked as `keyword`
-
-
-@define_hook(token)
-
 @syntax_type_hook(keyword)
 fragment = "fragment!"
 grammar  = "grammar!"
@@ -113,15 +121,10 @@ ignore   = "ignore!"
 include  = "include!"
 function = "fn!"
 as       = "as"
-// clean syntax type broadcast
+// clean warp broadcast
 @syntax_type_hook()
-
-
-@syntax_type_hook(constant) {
-    true  = "true"
-    false = "false"
-}
-
+// clean syntax type broadcast
 @define_hook()
-
+// clean all hook
+@clear_hook()
 
