@@ -1,11 +1,13 @@
 grammar! ygg {"*.yg","*.ygg", "*.grammar"}
 
 // Import the predefined types,
-// Otherwise the String type of each language will be used directly to represent the atomic expression
-import! "@typedefs/rust_types.toml"
+// Otherwise the `String` type of each language will be used directly to represent the atomic expression
+import! "@typedefs/literal_types.toml"
+
+ignore! {NEWLINE, WHITESPACE, COMMENT}
 
 // entry point
-program = statement*
+program = ^statement*
 
 // `#` will generate named bindings for languages that do not support union type, such as rust
 // Union type will be used directly in other languages that support union type, such as ts, scala
@@ -21,93 +23,123 @@ statement =
 //?
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
-grammar_statement = grammar ^id _grammar_exts? eos?
-_grammar_exts    _= "{" ~ @interleave(exts <- string, ",", trailing = true)? ~ "}"
+grammar_statement _= grammar ~ ^id ~ _grammar_exts? ~ eos?
+_grammar_exts      = "{" ~ @interleave(extensions <- string, ",", trailing = true)? ~ "}"
 
 
 //? `fragment` means that this file cannot build as grammar, it can only be imported.
 //? `id` represents the default name when importing, which can be changed by `as`.
 //* fragment ascii
-fragment_statement = _fragment ^id eos?
+fragment_statement _= _fragment ~ ^id ~ eos?
 
 
 //?
 //*
-include_statement =
-    | include (path <- string) (as ^id)?         #FromPath
-    | include (path <- string) _include_selected #FromPath
-_include_selected = "{" @interleave(item <- include_item, ",", trailing = 1)? "}"
-include_item      = (id <- id) as (alias <- id)
-
+import_statement _=
+    | import ~ (path <- string) ~ (as ^id)?         #FromPath
+    | import ~ (path <- string) ~ _import_selected #FromPathItems
+_import_selected  = "{" ~ @interleave(item <- import_item, ",", trailing = 1)? ~ "}"
+import_item       = (id <- id) ~ as ~ (alias <- id)
 
 //?
 //* ignores /\/
 //* ignores [comment, comment_inline]
-ignores_statement =
-    | ignores atom
-    | ignores "{" @interleave(string, ",", trailing = 1)? "}"
+ignores_statement _=
+    | ignores ~ atom
+    | ignores ~ "{" ~ @interleave(atom, ",", trailing = 1)? ~ "}"
 
+
+expression _=
+    | "(" ~ expression ~ ")"
+    | _data
+    | unary_suffix
+    | unary_prefix
+    | infix_expression
+unary_suffix =
+    | @unary_suffix(210, _suffix_ops, expression)
+unary_prefix =
+    | @unary_prefix(200, _prefix_ops, expression)
+infix_expression =
+    | @binary_left(40, expression, "~", expression)   #Concat
+    | @binary_left(30, expression, "#", expression)   #Tag
+    | @binary_left(20, expression, "|", expression)   #Or
+    | @binary_left(10, expression, "<-", expression)  #Label
+_prefix_ops @=
+    | "^"
+_suffix_ops @=
+    | "?"
+    | "*"
+    | "+"
 
 // `_` inline a item even if it not mark as automatic inline
 data = _atom
+atom =
+    | id
+    | string
+    | unsigned
+    | regex
+    | macro_call
 
-
-atom = string | regex |
-
-
-
-expression
 
 
 // `f(a, b)`  vs `f ~ (a | b) `
 // `f!(a, b)` vs `f ~ !(a | b)`
-funcion_call = (name <- @token("@", id)) "(" @interleave(Expression, ",") ")"
-
+macro_call _=
+      @token("@", name <- id)
+    ~ ("." ~ dot <- id)?
+    ~ "(" ~ @interleave(^expression, ",", trailing = 1) ~ ")"
 
 
 
 // Identifier
+@alias(id)
 @syntax_type(identifier)
-id: String @= ("_" | XID_START) ~ XID_CONTINUE
-
-
+identifier @= ("_" | XID_START) ~ XID_CONTINUE
 // The bare 0 will be considered as the string "0"
-integer: Integer @= _sign? _unsigned
-_unsigned         = 0 | [1-9] [0-9]*
-_sign             = [+-]
+integer    @= _sign? _unsigned
+_unsigned   = 0 | [1-9] [0-9]*
+_sign       = [+-]
+// string
+string     @=
+    | /'[^'\\]*(\\.[^'\\]*)*'/
+    | /"[^"\\]*(\\.[^"\\]*)*"/
+// regex
+regex_long _= "/" ~ (item <- regex_item) ~ "/" ~ (mode <- regex_mode)?
+regex_mode  = [gimsx]
+regex_item  =
+    |
+regex_range = (is_neg <- "[" | "[^")  ~ regex_range_item* ~ "]"
+regex_range_item =
+    | regex_set
+    | regex_range_item_group
+    | /[^\]]/
+regex_range_item_group =
+    | @binary_left(10, regex_range_item, "-", regex_range_item)
+regex_set = "\\p" ~ "{" ~ (set <- /[_0-9a-zA-Z]+/) ~ "}"
+regex_repeats _=
+    | "{" ~ (repeats <- integer) ~ "}"
+    | "{" ~ (least <- integer?) ~ "," ~ (most <- integer?) ~ "}"
+// end of line
+eos = ";"
 
 
-regex = "/"
 
-regex_range = "["  "]"
-
-regex_p = "\\p"
-
-regex_p _=
-    | "{" repeats <- integer "}"
-    | "{" (least <- integer?) "," (most <- integer?)  "}"
-
-inline_assignment =
-
-keyword_assignment = Id
-
-eos: bool = ";"
-
-
-@syntax_type(whitespace)
-whitespace = /\s/
-
-@syntax_type_hook(comment)
-comment_inline = "//"
-comment_block = "//"
-@syntax_type_hook()
 
 @syntax_type(identifier)
+
 
 @syntax_type(constant)
 bool: bool @= "true" | "false"
 
+//! ====================== OVERRIDE ============================
 
+COMMENT =
+    | comment_inline
+    | comment_multiline
+@syntax_type_hook(comment)
+comment_inline = "//!"
+comment_block = "//+" ~ "//-"
+@syntax_type_hook()
 
 //! ===================== HOOK AREA ============================
 
@@ -118,8 +150,8 @@ bool: bool @= "true" | "false"
 fragment = "fragment!"
 grammar  = "grammar!"
 ignore   = "ignore!"
-include  = "include!"
-function = "fn!"
+import   = "import!"
+macro    = "macro!"
 as       = "as"
 // clean warp broadcast
 @syntax_type_hook()

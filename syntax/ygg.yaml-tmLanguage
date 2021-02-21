@@ -67,6 +67,8 @@ repository:
           - include: '#data'
       - match: (?<!\w)(import!)
         name: keyword.control.import.ygg
+      - match: (?<!\w)(ignore!)
+        name: keyword.control.ignore.ygg
     #   - comment: import! name as alias
     #     begin: (?<!\w)(import!)\s*('[^']*'|"[^"]*")\s*(?:(as|as!)\s*([A-Za-z_][A-Za-z0-9_]*))?
     #     captures:
@@ -199,7 +201,7 @@ repository:
   id:
     patterns:
       - comment: id
-        match: (?<!\w)([A-Z_][A-Z0-9_]*)(?!\w)
+        match: (?<!\w)([A-Z_][A-Z0-9_]+)(?!\w)
         captures:
           '1': {name: constant.language.predefine.ygg}
       - comment: id
@@ -235,7 +237,7 @@ repository:
         captures:
           '1': {name: string.quoted.single.ygg}
         patterns:
-          - match: \\([btnfr'\\\n/ ]|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})
+          - match: \\([btnfr'\\\n\/ ]|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})
             name: constant.character.escape.ygg
           - match: \\[^btnfr/'\\\n]
             name: invalid.illegal.escape.ygg
@@ -243,7 +245,7 @@ repository:
         captures:
           '1': {name: string.quoted.single.ygg}
         patterns:
-          - match: \\([btnfr"\\\n/ ]|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})
+          - match: \\([btnfr"\\\n\/ ]|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})
             name: constant.character.escape.ygg
           - match: \\[^btnfr/"\\\n]
             name: invalid.illegal.escape.ygg
