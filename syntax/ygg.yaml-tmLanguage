@@ -9,9 +9,7 @@ patterns:
   - include: '#fragment'
   - include: '#import'
   - include: '#macro'
-  - include: '#tag'
-  - include: '#string'
-  - include: '#operator'
+  - include: '#data'
 # - include: '#illegal'
 repository:
   comment:
@@ -116,13 +114,17 @@ repository:
   operator:
     patterns:
       - match: (\?)
-        name: keyword.operator.optional.ygg
+        name: storage.type.ygg
       - match: (\^)
         name: keyword.operator.bind.ygg
       - match: (\|)
         name: keyword.operator.or.ygg
       - match: (\~)
-        name: keyword.operator.sequence.ygg
+        name: storage.type.ygg
+      - match: (\+)
+        name: storage.type.ygg
+      - match: (\*)
+        name: storage.type.ygg
   key:
     patterns:
       - name: entity.name.tag.ygg
@@ -131,6 +133,7 @@ repository:
         match: (".*"|'.*'|[0-9]+)
   data:
     patterns:
+      - include: '#tag'
       - comment: '{dict: "inline"}'
         begin: (?<!\w)([A-Za-z_][A-Za-z0-9_]*\s*)?(\{)\s*
         beginCaptures:
@@ -162,10 +165,6 @@ repository:
           '1': {name: punctuation.definition.array.ygg}
         patterns:
           - include: '#data'
-      - match: ([$])([A-Za-z_-][\\\.\/*A-Za-z0-9_]*)
-        captures:
-          '1': {name: punctuation.definition.cite.ygg}
-          '2': {name: support.function.cite.ygg}
       - match: (?<!\w)(true|false)(?!\w)
         captures:
           '1': {name: constant.other.boolean.ygg}
@@ -173,7 +172,20 @@ repository:
         captures:
           '1': {name: constant.other.null.ygg}
       - include: '#number'
+      - include: '#regex'
       - include: '#string'
+      - include: '#id'
+      - include: '#operator'
+  id:
+    patterns:
+      - comment: id
+        match: (?<!\w)([A-Z_][A-Z0-9_]*)(?!\w)
+        captures:
+          '1': {name: constant.language.predefine.ygg}
+      - comment: id
+        match: (?<!\w)([A-Za-z_][A-Za-z0-9_]*)(?!\w)
+        captures:
+          '1': {name: entity.name.variable.ygg}
   number:
     patterns:
       - match: (?<!\w)(0b[01]+)(?!\w)
@@ -200,6 +212,18 @@ repository:
         captures:
           '1': {name: constant.numeric.integer.ygg}
           '6': {name: keyword.control.handler.number.ygg}
+  regex:
+    patterns:
+      - comment: '/regex/ig'
+        begin: (^\/)
+        beginCaptures:
+          '1': {name: punctuation.definition.regex.ygg}
+        end: (^\/)(i|g)?
+        endCaptures:
+          '1': {name: punctuation.definition.regex.ygg}
+          '2': {name: storage.type.ygg}
+        patterns:
+          - include: 'source.regexp'
   string:
     patterns:
       - name: string.quoted.block.ygg

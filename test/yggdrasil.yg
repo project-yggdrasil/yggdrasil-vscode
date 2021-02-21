@@ -50,30 +50,29 @@ ignores_statement =
 
 
 
-value _= String | Regex |
+value _= string | regex |
 
 
 
-Expression
+expression
 
 
 // `f(a, b)`  vs `f ~ (a | b) `
 // `f!(a, b)` vs `f ~ !(a | b)`
-funcion_call = name <- @token("@", Id) "(" @interleave(Expression, ",") ")"
+funcion_call = name <- @token("@", id) "(" @interleave(Expression, ",") ")"
 
 
 
 
 // Identifier
 @syntax_type(identifier)
-id: String = @token(("_" | XID_START) XID_CONTINUE)
+id: String @= ("_" | XID_START) ~ XID_CONTINUE
 
 
-
-Integer = _sign? Unsigned
 // The bare 0 will be considered as the string "0"
-Unsigned = 0 | [1-9] [0-9]*
-_sign = [+-]
+integer  @= _sign? _unsigned
+_unsigned = 0 | [1-9] [0-9]*
+_sign     = [+-]
 
 
 regex = "/"
@@ -90,10 +89,14 @@ keyword_assignment = Id
 eos: bool = ";"
 
 
+@syntax_type(whitespace)
+whitespace = /\s/
 
-macro! interleave(rule: Rule, sep: Rule, trailing: bool = false) {
-    rule ~ (",", rule)*
-}
+@syntax_type(comment)
+comment_inline = "//"
+comment_block = "//"
+
+@syntax_type(identifier)
 
 boolean = "true" | "false"
 
@@ -115,6 +118,4 @@ false = "false"
 
 // clean syntax type broadcast
 @syntax_type_hook()
-
-
 

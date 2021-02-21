@@ -3,3 +3,8 @@ fragment! rust_types;
 import! "rust_types.toml"
 
 
+
+
+macro! interleave(rule: Rule, sep: Rule, trailing: bool = false) {
+    rule ~ (",", rule)*
+}
