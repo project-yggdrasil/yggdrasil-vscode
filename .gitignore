@@ -11,3 +11,7 @@ dist/**
 # Release
 *.vsix
 *.tgz
+*.g4
+*.nb
+*.ps1
+*.m

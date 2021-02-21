@@ -2,7 +2,7 @@ grammar! ygg {"*.yg","*.ygg", "*.grammar"}
 
 // Import the predefined types,
 // Otherwise the String type of each language will be used directly to represent the atomic expression
-import! "typedefs/rust_types.ygg";
+import! "@typedefs/rust_types.toml";
 
 // entry point
 program = _statements*
@@ -21,7 +21,7 @@ _statements =
 //?
 //* grammar tsg
 //* grammar tsg {"*.tsg", }
-grammar_statement = grammar ^id _grammar_exts? eos?
+grammar_statement = grammar &id _grammar_exts? eos?
 _grammar_exts    _= "{" ~ @interleave(exts <- string, ",", trailing = true)? ~ "}"
 
 
@@ -92,30 +92,36 @@ eos: bool = ";"
 @syntax_type(whitespace)
 whitespace = /\s/
 
-@syntax_type(comment)
+@syntax_type_hook(comment)
 comment_inline = "//"
 comment_block = "//"
+@syntax_type_hook()
 
 @syntax_type(identifier)
 
-boolean = "true" | "false"
+boolean: bool @= true | false
 
 // All elements defined next will be marked as `keyword`
-@syntax_type_hook(keyword)
+
 
 @define_hook(token)
+
+@syntax_type_hook(keyword)
 fragment = "fragment!"
 grammar  = "grammar!"
 ignore   = "ignore!"
 include  = "include!"
 function = "fn!"
 as       = "as"
-@define_hook()
-
-@syntax_type_hook(constant)
-true  = "true"
-false = "false"
-
 // clean syntax type broadcast
 @syntax_type_hook()
+
+
+@syntax_type_hook(constant) {
+    true  = "true"
+    false = "false"
+}
+
+@define_hook()
+
 
