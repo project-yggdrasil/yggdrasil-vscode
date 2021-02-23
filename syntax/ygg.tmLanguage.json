@@ -103,15 +103,16 @@
             ]
         },
         "fragment": {
-            "1": {
-                "name": "keyword.control.fragment.ygg"
-            },
-            "2": {
-                "name": "entity.name.type.class.ygg"
-            },
             "comment": "fragment! name",
             "match": "(?<!\\w)(fragment!)\\s+([A-Za-z_][A-Za-z0-9_]*)",
-            "captures": null
+            "captures": {
+                "1": {
+                    "name": "keyword.control.fragment.ygg"
+                },
+                "2": {
+                    "name": "entity.name.type.class.ygg"
+                }
+            }
         },
         "import": {
             "patterns": [
@@ -347,78 +348,6 @@
                     "include": "#tag"
                 },
                 {
-                    "comment": "{dict: \"inline\"}",
-                    "begin": "(?<!\\w)([A-Za-z_][A-Za-z0-9_]*\\s*)?(\\{)\\s*",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "entity.name.type.class.ygg"
-                        },
-                        "2": {
-                            "name": "punctuation.definition.dict.inline.ygg"
-                        }
-                    },
-                    "end": "\\s*(\\})(?!\\w)",
-                    "endCaptures": {
-                        "1": {
-                            "name": "punctuation.definition.dict.inline.ygg"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#record"
-                        },
-                        {
-                            "include": "#data"
-                        }
-                    ]
-                },
-                {
-                    "comment": "[1, 2, 3]",
-                    "begin": "(?<!\\w)([A-Za-z_][A-Za-z0-9_]*\\s*)?(\\[)\\s*",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "entity.name.type.class.ygg"
-                        },
-                        "2": {
-                            "name": "punctuation.definition.array.ygg"
-                        }
-                    },
-                    "end": "\\s*(\\])(?!\\w)",
-                    "endCaptures": {
-                        "1": {
-                            "name": "punctuation.definition.array.ygg"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#data"
-                        }
-                    ]
-                },
-                {
-                    "comment": "(1, 2, 3)",
-                    "begin": "(?<!\\w)([A-Za-z_][A-Za-z0-9_]*\\s*)?(\\()\\s*",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "entity.name.type.class.ygg"
-                        },
-                        "2": {
-                            "name": "punctuation.definition.array.ygg"
-                        }
-                    },
-                    "end": "\\s*(\\))(?!\\w)",
-                    "endCaptures": {
-                        "1": {
-                            "name": "punctuation.definition.array.ygg"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#data"
-                        }
-                    ]
-                },
-                {
                     "include": "#number"
                 },
                 {
@@ -490,16 +419,16 @@
             "patterns": [
                 {
                     "comment": "/regex/ig",
-                    "begin": "(^\\/)",
+                    "begin": "(\\/)",
                     "beginCaptures": {
                         "1": {
-                            "name": "punctuation.definition.regex.ygg"
+                            "name": "punctuation.definition.string.begin.ygg"
                         }
                     },
-                    "end": "(^\\/)([ig])?",
+                    "end": "(\\/)([gimsx])?",
                     "endCaptures": {
                         "1": {
-                            "name": "punctuation.definition.regex.ygg"
+                            "name": "punctuation.definition.string.end.ygg"
                         },
                         "2": {
                             "name": "storage.type.ygg"
@@ -507,11 +436,107 @@
                     },
                     "patterns": [
                         {
-                            "include": "source.regexp"
+                            "include": "#regex_set"
+                        },
+                        {
+                            "include": "#regex_range"
+                        },
+                        {
+                            "include": "#regex_item"
                         }
                     ]
                 }
             ]
+        },
+        "regex_item": {
+            "patterns": [
+                {
+                    "match": "(\\*|\\+|\\?)",
+                    "captures": {
+                        "1": {
+                            "name": "storage.type.ygg"
+                        }
+                    }
+                },
+                {
+                    "match": "(\\\\.)",
+                    "captures": {
+                        "1": {
+                            "name": "constant.character.escape.regexp"
+                        }
+                    }
+                },
+                {
+                    "match": "(.)",
+                    "captures": {
+                        "1": {
+                            "name": "constant.ygg"
+                        }
+                    }
+                }
+            ]
+        },
+        "regex_range": {
+            "comment": "[_0-9a-z\\p{white_space}]",
+            "begin": "(\\[\\^|\\[)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.string.begin.ygg"
+                }
+            },
+            "end": "(\\])",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.string.end.ygg"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#regex_set"
+                },
+                {
+                    "include": "#regex_range_item"
+                }
+            ]
+        },
+        "regex_range_item": {
+            "patterns": [
+                {
+                    "match": "(-)",
+                    "captures": {
+                        "1": {
+                            "name": "storage.type.ygg"
+                        }
+                    }
+                },
+                {
+                    "match": "(\\\\.)",
+                    "captures": {
+                        "1": {
+                            "name": "constant.character.escape.regexp"
+                        }
+                    }
+                },
+                {
+                    "match": "(.)",
+                    "captures": {
+                        "1": {
+                            "name": "constant.ygg"
+                        }
+                    }
+                }
+            ]
+        },
+        "regex_set": {
+            "match": "(\\\\p)(\\{[^\\}]+\\})",
+            "captures": {
+                "1": {
+                    "name": "constant.character.escape.regexp"
+                },
+                "2": {
+                    "name": "storage.type.ygg"
+                }
+            }
         },
         "string": {
             "patterns": [

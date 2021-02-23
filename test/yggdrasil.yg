@@ -98,7 +98,7 @@ identifier @= ("_" | XID_START) ~ XID_CONTINUE
 // The bare 0 will be considered as the string "0"
 integer    @= _sign? _unsigned
 _unsigned   = 0 | [1-9] [0-9]*
-_sign       = [+-]
+_sign       = [+\-]
 // string
 string     @=
     | /'[^'\\]*(\\.[^'\\]*)*'/
@@ -107,21 +107,21 @@ string     @=
 regex_long _= "/" ~ (item <- regex_item) ~ "/" ~ (mode <- regex_mode)?
 regex_mode  = [gimsx]
 regex_item  =
-    |
+    | regex_range
+    | regex_set
 regex_range = (is_neg <- "[" | "[^")  ~ regex_range_item* ~ "]"
 regex_range_item =
     | regex_set
     | regex_range_item_group
-    | /[^\]]/
+    | [^\]]
 regex_range_item_group =
     | @binary_left(10, regex_range_item, "-", regex_range_item)
-regex_set = "\\p" ~ "{" ~ (set <- /[_0-9a-zA-Z]+/) ~ "}"
+regex_set = "\\p" ~ "{" ~ (set <- [_0-9a-zA-Z]+) ~ "}"
 regex_repeats _=
     | "{" ~ (repeats <- integer) ~ "}"
     | "{" ~ (least <- integer?) ~ "," ~ (most <- integer?) ~ "}"
 // end of line
 eos = ";"
-
 
 
 
