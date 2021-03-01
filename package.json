@@ -2,10 +2,10 @@
     "private": true,
     "name": "vscode-ygg",
     "displayName": "Yggdrasil Language Support",
-    "description": "Highlight and formatter for ygg Readable Configiration",
+    "description": "Highlight and formatter for ygg Readable Configuration",
     "publisher": "aster",
     "version": "0.1.0",
-    "icon": "logo.png",
+    "icon": "syntax/logo.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/GalAster/vscode-ygg.git"
