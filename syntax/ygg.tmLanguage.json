@@ -61,46 +61,16 @@
             ]
         },
         "grammar": {
-            "patterns": [
-                {
-                    "comment": "grammar! name {\"*.ext\", }",
-                    "begin": "(?<!\\w)(grammar!)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(\\{)\\s*",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "keyword.control.grammar.ygg"
-                        },
-                        "2": {
-                            "name": "variable.other.readwrite.ygg"
-                        },
-                        "3": {
-                            "name": "punctuation.definition.dict.inline.ygg"
-                        }
-                    },
-                    "end": "\\s*(\\})(?!\\w)",
-                    "endCaptures": {
-                        "1": {
-                            "name": "punctuation.definition.dict.inline.ygg"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#string"
-                        }
-                    ]
+            "comment": "grammar! name",
+            "match": "(?<!\\w)(grammar!)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.grammar.ygg"
                 },
-                {
-                    "comment": "grammar! name",
-                    "match": "(grammar!)\\s+([A-Za-z_][A-Za-z0-9_]*)(?=\\s*$)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.grammar.ygg"
-                        },
-                        "2": {
-                            "name": "entity.name.type.class.ygg"
-                        }
-                    }
+                "2": {
+                    "name": "entity.name.type.class.ygg"
                 }
-            ]
+            }
         },
         "fragment": {
             "comment": "fragment! name",
@@ -377,7 +347,7 @@
                 },
                 {
                     "comment": "id",
-                    "match": "(?<!\\w)([A-Za-z_][A-Za-z0-9_]*)(?!\\w)",
+                    "match": "(?<!\\w)([A-Za-z]|[A-Za-z_][A-Za-z0-9_]+)(?!\\w)",
                     "captures": {
                         "1": {
                             "name": "entity.name.function.ygg"

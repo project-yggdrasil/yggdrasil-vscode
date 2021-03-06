@@ -11,16 +11,16 @@ export let client: LanguageClient
 
 export function start_client() {
     let serverOptions: Executable = {
-        command: 'arc-lsp',
+        command: 'ygg-lsp',
     }
 
     let clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'arc' }],
+        documentSelector: [{ scheme: 'file', language: 'ygg' }],
     }
 
     client = new LanguageClient(
-        'arcLanguageServer',
-        'Arc Server',
+        'yggLanguageServer',
+        'Ygg Server',
         serverOptions,
         clientOptions,
     )
@@ -44,8 +44,8 @@ async function installServerBinary(): Promise<boolean> {
         { type: 'cargo', task: 'install' },
         vscode.workspace.workspaceFolders![0],
         'Installing lsp server',
-        'arc-lsp',
-        new vscode.ShellExecution('cargo install arc-lsp'),
+        'ygg-lsp',
+        new vscode.ShellExecution('cargo install ygg-lsp'),
     )
     const promise = new Promise<boolean>((resolve) => {
         vscode.tasks.onDidEndTask((e) => {
@@ -64,7 +64,7 @@ async function installServerBinary(): Promise<boolean> {
 
 export async function tryToInstallLanguageServer(configuration: vscode.WorkspaceConfiguration) {
     const selected = await vscode.window.showInformationMessage(
-        'Install arc-lsp-server (Rust toolchain required) ?',
+        'Install ygg-lsp-server (Rust toolchain required) ?',
         'Install',
         'Never',
     )

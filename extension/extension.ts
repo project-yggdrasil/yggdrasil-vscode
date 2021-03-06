@@ -4,9 +4,9 @@ import { is_installed, start_client, client } from './lsp'
 
 
 export async function activate(context: vscode.ExtensionContext) {
-    const configuration = vscode.workspace.getConfiguration('arc')
+    const configuration = vscode.workspace.getConfiguration('ygg')
     const useLanguageServer = configuration.get<boolean>('useLanguageServer')
-    const shouldStartClient = useLanguageServer && (await is_installed('arc-lsp'))
+    const shouldStartClient = useLanguageServer && (await is_installed('ygg-lsp'))
     if (shouldStartClient) {
         start_client()
     } else if (useLanguageServer) {

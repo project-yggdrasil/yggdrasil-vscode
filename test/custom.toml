@@ -1,0 +1,9 @@
+
+
+[rust.functions.is_neg]
+fn_type = "bool"
+fn_body = """
+pub fn is_neg(s: &str) -> bool {
+    s.end_with()
+}
+"""

@@ -96,15 +96,15 @@ macro_call _=
 @syntax_type(identifier)
 identifier @= ("_" | XID_START) ~ XID_CONTINUE
 // The bare 0 will be considered as the string "0"
-integer    @= _sign? _unsigned
-_unsigned   = 0 | [1-9] [0-9]*
+integer    @= _sign? unsigned
+unsigned    = 0 | [1-9] [0-9]*
 _sign       = [+\-]
 // string
 string     @=
     | /'[^'\\]*(\\.[^'\\]*)*'/
     | /"[^"\\]*(\\.[^"\\]*)*"/
 // regex
-regex_long _= "/" ~ (item <- regex_item) ~ "/" ~ (mode: String <- _regex_mode)?
+regex_long _= "/" ~ (item <- regex_item) ~ "/" ~ (mode <- _regex_mode)?
 regex_mode  = [gimsx]
 regex_item  =
     | regex_range
@@ -143,8 +143,8 @@ comment_block = "//+" ~ "//-"
 
 //! ===================== HOOK AREA ============================
 
-// All elements defined next will warp with `@token`
-@define_hook(@token)
+// All elements defined next will warp with `token`
+@define_hook(token)
 // All elements defined next will be marked as `keyword`
 @syntax_type_hook(keyword)
 fragment = "fragment!"
