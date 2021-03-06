@@ -190,6 +190,8 @@ repository:
           '6': {name: keyword.control.handler.number.ygg}
   regex:
     patterns:
+      - include: '#regex_set'
+      - include: '#regex_range'
       - comment: '/regex/ig'
         begin: (\/)
         beginCaptures:
@@ -201,6 +203,7 @@ repository:
         patterns:
           - include: '#regex_set'
           - include: '#regex_range'
+          - include: '#regex_group'
           - include: '#regex_item'
   regex_item:
     patterns:
@@ -215,9 +218,10 @@ repository:
           '1': {name: constant.ygg}
   regex_range:
     comment: '[_0-9a-z\p{white_space}]'
-    begin: (\[\^|\[)
+    begin: (\[)(\^)?
     beginCaptures:
       '1': {name: punctuation.definition.string.begin.ygg}
+      '2': {name: punctuation.definition.string.begin.ygg}
     end: (\])
     endCaptures:
       '1': {name: punctuation.definition.string.end.ygg}
@@ -240,6 +244,20 @@ repository:
     captures:
       '1': {name: constant.character.escape.regexp}
       '2': {name: storage.type.ygg}
+  regex_group:
+    comment: '(1,2,3)'
+    begin: (\()(\?:|\?=)?
+    beginCaptures:
+      '1': {name: punctuation.definition.string.begin.ygg}
+      '2': {name: punctuation.definition.string.begin.ygg}
+    end: (\))
+    endCaptures:
+      '1': {name: punctuation.definition.string.end.ygg}
+    patterns:
+      - include: '#regex_set'
+      - include: '#regex_range'
+      - include: '#regex_group'
+      - include: '#regex_item'
   string:
     patterns:
       - match: ('[^'\\]*(?:\\.[^'\\]*)*')

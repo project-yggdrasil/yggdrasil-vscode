@@ -1,0 +1,40 @@
+grammar! ygg {"*.yg","*.ygg", "*.grammar"}
+
+// Import the predefined types,
+import! "@typedefs/literal_types.toml"
+
+ignore! {NEWLINE, WHITESPACE, COMMENT}
+
+// entry point
+program = ^statement*
+
+// `#` will generate named bindings for languages that do not support union type
+statement =
+    | grammar_statement   #GrammarStatement
+    | fragment_statement  #FragmentStatement
+    | include_statement   #IncludeStatement
+    | ignore_statement    #IgnoreStatement
+    | eos                 #EmptyStatement!
+
+// Set up the grammar file and associate the extension
+grammar_statement _= grammar ~ ^id ~ _grammar_exts? ~ eos?
+_grammar_exts      = "{" ~ @interleave(extensions <- string, ",", trailing = true)? ~ "}"
+
+
+// regex
+regex_long _= "/" ~ (item <- regex_item) ~ "/" ~ (mode <- regex_mode)?
+regex_mode  = [gimsx]
+regex_item  =
+    | regex_range
+    | regex_set
+regex_range = (is_neg <- "[" | "[^")  ~ regex_range_item* ~ "]"
+regex_range_item =
+    | regex_set
+    | regex_range_item_group
+    | [^\]]
+regex_range_item_group =
+    | @binary_left(10, regex_range_item, "-", regex_range_item)
+regex_set = "\\p" ~ "{" ~ (set <- [_0-9a-zA-Z]+) ~ "}"
+regex_repeats _=
+    | "{" ~ (repeats <- integer) ~ "}"
+    | "{" ~ (least <- integer?) ~ "," ~ (most <- integer?) ~ "}"
