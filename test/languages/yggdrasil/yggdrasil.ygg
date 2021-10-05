@@ -3,6 +3,7 @@ grammar! ygg {"*.yg","*.ygg", "*.grammar"}
 // Import the predefined types,
 // Otherwise the `String` type of each language will be used directly to represent the atomic expression
 import! "@typedefs/literal_types.toml"
+import! "custom_handler.toml"
 
 ignore! {NEWLINE, WHITESPACE, COMMENT}
 
