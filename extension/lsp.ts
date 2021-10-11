@@ -11,7 +11,7 @@ export let client: LanguageClient
 
 export function start_client() {
     let serverOptions: Executable = {
-        command: 'ygg-lsp',
+        command: 'yggdrasil-lsp',
     }
 
     let clientOptions: LanguageClientOptions = {
@@ -44,8 +44,8 @@ async function installServerBinary(): Promise<boolean> {
         { type: 'cargo', task: 'install' },
         vscode.workspace.workspaceFolders![0],
         'Installing lsp server',
-        'ygg-lsp',
-        new vscode.ShellExecution('cargo install ygg-lsp'),
+        'yggdrasil-lsp',
+        new vscode.ShellExecution('cargo install yggdrasil-lsp'),
     )
     const promise = new Promise<boolean>((resolve) => {
         vscode.tasks.onDidEndTask((e) => {

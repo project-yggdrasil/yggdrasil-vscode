@@ -22,7 +22,7 @@
         "onLanguage:ygg"
     ],
     "scripts": {
-        "build": "wee lint && ts-node syntax/build.ts && tsc",
+        "build": "wee lint && tsc",
         "pack": "wee build && vsce package",
         "lint": "tslint **/*.ts --fix",
         "reset": "git reset Head~ --soft"
@@ -36,8 +36,8 @@
                 ],
                 "extensions": [
                     ".ygg",
-                    ".ark",
-                    ".rc"
+                    ".yg",
+                    ".grammar"
                 ],
                 "filenames": [],
                 "filenamePatterns": [],

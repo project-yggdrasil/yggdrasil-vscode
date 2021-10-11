@@ -1,19 +1,19 @@
 {
     "fileTypes": [],
-    "scopeName": "markdown.arc.codeblock",
+    "scopeName": "markdown.ygg.codeblock",
     "injectionSelector": "L:markup.fenced_code.block.markdown",
     "patterns": [
         {
-            "begin": "(?<=[`~])arc(\\s+[^`~]*)?$",
+            "begin": "(?<=[`~])(ygg|yg)(\\s+[^`~]*)?$",
             "end": "(^|\\G)(?=\\s*[`~]{3,}\\s*$)",
             "patterns": [
                 {
                     "begin": "(^|\\G)(\\s*)(.*)",
                     "while": "(^|\\G)(?!\\s*([`~]{3,})\\s*$)",
-                    "contentName": "meta.embedded.block.arc",
+                    "contentName": "meta.embedded.block.ygg",
                     "patterns": [
                         {
-                            "include": "source.arc"
+                            "include": "source.ygg"
                         }
                     ]
                 }

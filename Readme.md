@@ -9,3 +9,7 @@ Yggdrasil Language Support
 ## Syntax Highlight
 
 ![code.png](https://i.loli.net/2021/10/04/knJMocTmQUBChKS.png)
+
+## Auto Completion
+
+![code.png](https://i.loli.net/2021/10/11/PMqmgCKryfS9spa.png)
