@@ -1,0 +1,6 @@
+grammar! test
+
+rule = a ~ b
+
+rule = a ~ b
+

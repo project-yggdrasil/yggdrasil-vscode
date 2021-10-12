@@ -13,3 +13,8 @@ Yggdrasil Language Support
 ## Auto Completion
 
 ![code.png](https://i.loli.net/2021/10/11/PMqmgCKryfS9spa.png)
+
+
+## Diagnostics
+
+![code.png](https://i.loli.net/2021/10/12/EfjtYebC2ulV5kz.png)

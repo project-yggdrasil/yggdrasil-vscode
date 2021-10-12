@@ -20,7 +20,7 @@ export function start_client() {
 
     client = new LanguageClient(
         'yggLanguageServer',
-        'Ygg Server',
+        'Yggdrasil Server',
         serverOptions,
         clientOptions,
     )
